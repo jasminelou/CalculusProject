@@ -1,4 +1,4 @@
 print("Hello");
 degree = []
 coefficients  []
-input = input("")
+input = input("hello")
