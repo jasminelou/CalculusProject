@@ -1,0 +1,209 @@
+#x**3 + x*math.sin(x) not finding a minimum
+def equality(first, last, nameFirst, nameLast): #Provides the interval notation format for the printing of intervals in concavity tests and increasing/decreasing.
+    print (nameFirst + "(-∞, " + str(first[0]) + "]", end = '') #What happens at the endpoints, with first interval
+    for i in range (1, (len(first))): #If more than one point in first interval
+        print (" U [" + str(last[i - 1]) + ", " + str(first[i]) + "]", end = '') #Add interval to set
+    print (" U [" + str(last[len(first) - 1]) + ", ∞)", end = '\n') #Last point of last interval, will go to infinity
+    print (nameLast, end = '') #What happens in the middle
+    print ("[" + str(first[0]) + ", " + str(last[0]) + "]", end = '') #Any other points, must be at least one of each if equal
+    for i in range (1, (len(first))): #Values other than first point
+        print (" U [" + str(first[i]) + ", " + str(last[i]) + "]", end = '') #Prints more intervals
+    print ('', end = '\n')
+
+def inequality(bigger, smaller, nameBig, nameSmall): #Provides the interval notation format for the printing of intervals in concavity tests and increasing/decreasing.
+    print (nameBig + "(-∞, " + str(bigger[0]) + "]", end = '') #Prints what's happening at negative infinity, ends at first of bigger intervals
+    if smaller != []: #If smaller interval isn't empty
+        for i in range (1, (len(bigger))): #For any other points in bigger besides first
+            print (" U [" + str(smaller[i - 1]) + ", " + str(bigger[i]) + "]", end = '') #Print interval
+    print ('', end = '\n') #Space
+    print (nameSmall, end = '') #Print what happens at far right
+    if smaller != []: #If smaller interval isn't empty
+        for i in range(1, (len(bigger))): #For any other points in bigger besides first
+            print ("[" + str(bigger[i - 1]) + ", " + str(smaller[i - 1]) + "] U ", end = '') #Print interval
+    print ("[" + str(bigger[len(bigger) - 1]) + ", ∞)", end = '\n') #Last point in bigger will be opposite, goes to infinity
+
+def concavity (second, realInflectPos, realInflectNeg, realInflect): #Finds concavity
+    print("", end = "\n")
+    if realInflect == []: #Prints always concave up or down if there is no point of inflection based on the sign of the second derivative.
+        if second[0] > 0:
+            print ("Always concave up")
+        if second[0] < 0:
+            print ("Always concave down")
+    elif len(realInflectPos) > len(realInflectNeg): #If changes from down to up more times
+        inequality(realInflectPos, realInflectNeg, "Concave down: ", "Concave up: ")
+    elif len(realInflectNeg) > len(realInflectPos): #If changes from up to down more times
+        inequality(realInflectNeg, realInflectPos, "Concave up: ", "Concave down: ")
+    elif len(realInflectNeg) == len(realInflectPos): #If changes the same amount of times
+        if realInflectNeg[0] < realInflectPos[0]: #If changes negative first
+            equality(realInflectNeg, realInflectPos, "Concave up: ", "Concave down: ")
+        if realInflectPos[0] < realInflectNeg [0]: #If changes positive first
+            equality(realInflectPos, realInflectNeg, "Concave down: ", "Concave up: ")
+
+def testInterval (maxima, minima, big, small): # tests for when the function is increasing and when it is decreasing
+    print ("") #Adds a space
+    if maxima == [] and minima == []: #If no maxima and minima
+        if big < small: #If the extreme right value is less than the extreme left value...
+            print ("Always decreasing")
+        if small < big: #If the extreme left value is less than the extreme right value
+            print ("Always increasing")
+    elif len(maxima) > len(minima): #If more maxima than minima
+        inequality(maxima, minima, "Increasing: ", "Decreasing: ")
+    elif len(minima) > len(maxima): #If more minima than maxima
+        inequality(minima, maxima, "Decreasing: ", "Increasing: ")
+    elif len(minima) == len(maxima): #If the same amount
+        if minima[0] < maxima[0]: #If the minima comes first
+            equality(minima, maxima, "Decreasing: ", "Increasing: ")
+        if maxima[0] < minima [0]: #If the maxima comes first
+            equality(maxima, minima, "Increasing: ", "Decreasing: ")
+    
+def printExtrema (name, array):
+    nameTwo = name.lower() #Makes the name lowercase
+    if array != []: #Only computes the next few steps if there is actually an extrema.
+        print (name + ": ", end = '') #prints "name: "
+        for i in range (0, len(array)): #for every extrema, prints the extrema plus a comma at the end.
+            coordinate = array[i]
+            print (coordinate, end = '')
+        print ('', end = "\n")
+    else:
+        print ("No " + str(nameTwo)) #if there are no extrema, print No + lowercased name of type of extrema
+
+def testExtrema (function, criticalVals):
+    minima = [] #Creates array for locations of minima of the function
+    maxima = [] #Creates array for locations of maxima of the function
+    localMaxima = [] #Creates array for local maxima
+    localMinima = [] #Creates array for local minima
+    absMaxima = [] #Creates array for absolute maxima
+    absMinima = [] #Creates array for absolute minima
+    x = numberMax #Value bigger than user-created domain
+    big = eval(function) #Evaluates function at that value
+    biggie = [] #Creates array for absolute maxima
+    x = numberMin #Value smaller than user-created domain
+    small = eval(function) #Evaluates function at that value
+    smallie = [] #Creates array for absolute minima
+    if criticalVals != []: #If critical values exist
+        for i in range (0, len(criticalVals)): #For indeces in critical value range
+            criticalVals[i] = criticalVals[i].__round__(2) #Round to two decimal places
+            x = criticalVals[i] #Find critical value location
+            value = eval(function) #Evaluate function at that location
+            x = criticalVals[i] + .01 #A little past the location of the critical value
+            valueBig = eval(function) #Evaluates function at that location
+            x = criticalVals[i] - .01 #A little before the location of the critical value
+            valueSmall = eval(function) #Evaluates function at that location
+            if valueBig < value and valueSmall < value: #If locations a tiny bit before and after critical value have values less than the output of the cv
+                if small < value and big < value: #If locations far away from critical value and range have values less than the output of the cv
+                    if biggie == []: #If no absolute maxima have been stored
+                        biggie.append(value) #Store the proposed absolute maximum
+                        biggie.append(criticalVals[i]) #Store its location
+                    else: #If an absolute maximum has been stored
+                        if biggie[0] < value: #If its value is less than the value of the new proposed absolute maximum
+                            biggie[0] = value #Store the new value
+                            biggie[1] = criticalVals[i] #Store the new location
+                    localMaxima.append ((criticalVals[i], value)) #Add value to local maxima
+                else: #If not an absolute maxima
+                    localMaxima.append((criticalVals[i], value)) #Add value to local maxima
+                maxima.append(criticalVals[i]) #Add location of maximum to list
+            if valueBig > value and valueSmall > value: #If locations a tiny bit before and after critical value have values more than the output of the cv
+                if small > value and big > value: #If locations far away from critical value and range have values more than the output of the cv
+                    if smallie == []: #If no absolute minima have been stored
+                        smallie.append(value) #Store the proposed absolute minimum
+                        smallie.append(criticalVals[i]) #Store its location
+                    else: #If an absolute minimum has been stored
+                        if smallie[0] > value: #If its value is greater than the value of the new proposed absolute minimum
+                            smallie[0] = value #Store the new value
+                            smallie[1] = criticalVals[i] #Store the new location
+                    localMinima.append ((criticalVals[i], value)) #Add value to local minima
+                else: #If not an absolute minima
+                    localMinima.append((criticalVals[i], value)) #Add value to local minima
+                minima.append(criticalVals[i]) #Add location of minimum to list
+    if biggie != []: #If an absolute maximum has been stored
+        absMaxima.append((biggie[1], biggie[0])) #Add location and value to absolute maxima list
+    if smallie != []: #If an absolute minimum has been stored
+        absMinima.append((smallie[1], smallie[0])) #Add location and value to absolute minima list
+    printExtrema ("Absolute maxima", absMaxima) #Print absolute maxima
+    printExtrema ("Local maxima", localMaxima) #Print local maxima
+    printExtrema ("Absolute minima", absMinima) #Print absolute minima
+    printExtrema ("Local minima", localMinima) #Print local minima
+    return maxima, minima, big, small #Return locations of maxima/minima, large and small values
+
+def realInflect(second, number): #Finding points of inflection
+    realInflectPos = [] #For if changes from concave down to concave up
+    realInflectNeg = [] #For if changes from concave up to concave down
+    inflectReal = [] #All points
+    for d in range (0, (len(second) - 2)): #For points in d besides endpoints
+        num = second[d] #Second derivative at that point
+        if d != 0 and d != (numberRaw - 2): #If not an endpoint
+            dPlus = d + 1 #Point one after
+            dMinus = d - 1 #Point one before
+            numPlus = second[dPlus] #Second derivative at point one after
+            numMinus = second[dMinus] #Second derivative at point one before
+            if numPlus > 0 and numMinus < 0 and num >= 0: #If second derivative changes signs from concave down to up
+                realInflectPos.append((d - (numberRaw/2))*.01) #Append to positive inflection list
+                inflectReal.append((d - (numberRaw/2))*.01) #Append to total inflection list
+            if numPlus < 0 and numMinus > 0 and num >= 0: #If second derivative changes signs from concave up to down
+                realInflectNeg.append((d - (numberRaw/2))*.01) #Append to negative inflection list
+                inflectReal.append((d - (numberRaw/2))*.01) #Append to total inflection list
+    return realInflectPos, realInflectNeg, inflectReal #Return arrays of inflection points
+
+def findZeroes (number, array, resultArray):
+    for i in range (0, number, 1):
+        num = array[i] #Finds derivative of value
+        if i != 0 and i != (number - 1): #Negates endpoints
+            iPlus = i + 1 #x value after derivative location
+            iMinus = i - 1 #x value before derivative location
+            numMinus = array[iMinus] #derivative after point
+            numPlus = array[iPlus] #derivative before point
+            absMinus = abs(0.000 - numMinus) #distance of derivative before point from zero
+            absPlus = abs(0.000 - numPlus) #distance of derivative after point from zero
+            absNum = abs(0.000 - num) #distance of derivative from zero
+            if absPlus > absNum and absMinus > absNum: #checks if both distances are greater
+                d = (i - (numberRaw/2))*.01 #if true, scales down to value
+                resultArray.append(d) #appends value
+    return resultArray #returns critical values after testing all
+
+def derivative(function, numberRaw):
+    derivatives = [] #Creates list for derivatives
+    criticalVals = [] #Creates list for critical values
+    secondDerivatives = [] #Creates list for second derivatives
+    pointsOfInflection = [] #Creates list for points of inflection
+    for d in range (numberMin, numberMax, 1): #Goes through values
+        i = .01*d #Scales down number to hundredths (function goes to hundredths)
+        less = i - .0001 #Uses NDER to find derivative at that point
+        more = i + .0001
+        x = less
+        one = eval(function)
+        x = more
+        two = eval(function)
+        deriv = (two - one)/.0002
+        derivatives.append(deriv) #Adds derivative found by NDER to derivative list
+    criticalVals = findZeroes(numberRaw, derivatives, criticalVals) #Calls function to find critical values
+    for i in range (0, numberRaw, 1):
+        num = derivatives[i] #Takes derivative
+        if i != (numberRaw - 1): #If not endpoint...
+            numPlus = derivatives[i + 1] #Finds next derivative
+            secondDeriv = numPlus - num #Subtracts to find second derivative
+            secondDerivatives.append(secondDeriv) #Adds to list
+    maxima, minima, big, small = testExtrema (function, criticalVals) #Finds extrema
+    testInterval(maxima, minima, big, small) #Finds if increasing or decreasing
+    print ("") #Formatting
+    realInflectPos, realInflectNeg, inflect = realInflect(secondDerivatives, (numberRaw/2)) #Find inflection points
+    for i in range (0, len(inflect)): #Rounds inflection points
+        inflect[i] = inflect[i].__round__(2)
+    if inflect != []: #If there are inflection points
+        print ("Points of inflection: ")
+        for i in range (0, len(inflect)): #Print the inflection points
+            x = inflect[i]
+            valueInflect = eval(function)
+            print ("(" + str(inflect[i]) + ", " + str(valueInflect) + ") ")
+    else: #If no inflection points
+        print ("No points of inflection") #Say so
+    concavity (secondDerivatives, realInflectPos, realInflectNeg, inflect) #Finds the concavity
+
+import math #Allows us to use math functions
+function = str(input("Please input your function: ")) #Allows user to input function
+numberMin = int((int(input("Minimum tested value: ")) + .01) *100) #Allows user to decide minimum, scales it up for lists
+numberMax = int(input("Maximum tested value: "))*100 #Allows user to decide maximum, scales it up for lists
+numberRaw = (numberMax - numberMin) #Finds length of list
+print (" ") #Formatting
+derivative(function, numberRaw) #Calls derivative function
+print ("")
+print ("Go to CalculusProject.py for more.")
