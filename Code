@@ -1,4 +1,145 @@
-print("Hello");
-degree = []
-coefficients  []
-input = input("hello")
+def zeroRemoval(array):
+    firstTrip = False
+    lastTrip = True
+    print(array)
+    for i in range(0, len(array)):
+        if firstTrip == False and array[i] == 0:
+            firstTrip = True
+            noZeroes = [0]*(i)
+    for i in range(0, len(noZeroes)):
+        noZeroes[i] = array[i]
+    print (noZeroes)
+    return noZeroes
+
+def makeArrayOne(array, number):
+    firstTerm = False
+    lastTerm = False
+    firstLoc = 0
+    lastLoc = 0
+    for i in range (0, number):
+        if array[i] != 0 and firstTerm == False:
+            firstLoc = i
+            firstTerm = True
+    for i in range (number - 1, -1, -1):
+        if array[i] != 0 and lastTerm == False:
+            lastLoc = i
+            lastTerm = True
+    return firstLoc, lastLoc
+
+def printDerivPoly(name, array, dispArray):
+    firstTerm = False
+    print (name, end = '')
+    for i in range (0, 7):
+        if float(array[i]) != 0 and firstTerm == False:
+            firstTerm = True
+            print(dispArray[i], end = '')
+        elif float(array[i]) != 0:
+            print(" + " + str(dispArray[i]), end = '')
+    if firstTerm == False:
+        print ("0")
+    print ('', end = '\n')
+
+def polynomial(number):
+    isRunning1 = True
+    while isRunning1 == True:
+        degree = input("Degree: ")
+        degree = float(degree)
+        if degree <= (number - 1):
+            isRunning1 = False
+        else:
+            print ("Degree must be less than or equal to 6")
+    print (" ")
+    arrayVars = [0] * number
+    termVars = ["ax^6", "bx^5", "cx^4", "dx^3", "ex^2", "fx", "g"]
+    print('Template: ', end='')
+    for i in range(0, number):
+        if i <= degree:
+            arrayVars[number - 1 - i] = 1
+    for i in range(0, number):
+        if arrayVars[i] == 1:
+            if termVars[i] == termVars[number - 1]:
+                print (termVars[i], end = '\n')
+            else:
+                print (termVars[i] + " + ", end='')
+    letterVars = ["a", "b", "c", "d", "e", "f", "g"]
+    funcVars = [0] * number
+    dispFuncVars = [0] * number
+    firstDerivVars = [0] * number
+    dispfirstDerivVars = [0] * number
+    secondDerivVars = [0] * number
+    dispsecondDerivVars = [0] * number
+    for i in range (0, number):
+        if arrayVars[i] == 1:
+            funcVars[i] = input(letterVars[i] + ": ")
+            if i != (number - 1):
+                if (number - 1 - i) == 1 and funcVars[i] == "1": 
+                    dispFuncVars[i] = "x"
+                elif (number - 1 - i) == 1:
+                    dispFuncVars[i] = (str(funcVars[i]) + "x")
+                elif funcVars[i] == "1":
+                    dispFuncVars[i] = ("x^" + str(number - 1 - i))
+                else:
+                    dispFuncVars[i] = (str(funcVars[i]) + "x^" + str(number - 1 - i))
+            else:
+                dispFuncVars[i] = (str(funcVars[i]))
+            firstDerivVars[i] = (number - 1 - i)*int(funcVars[i])
+            if firstDerivVars[i] != 0 and i != (number - 2):
+                if ((number - 2) - i) == 1 and firstDerivVars[i] == "1": 
+                    dispfirstDerivVars[i] = ("x")
+                elif ((number - 2) - i) == 1:
+                    dispfirstDerivVars[i] = (str(firstDerivVars[i]) + "x")
+                elif firstDerivVars[i] == "1":
+                    dispfirstDerivVars[i] = ("x^" + str((number - 2) - i))
+                else: 
+                    dispfirstDerivVars[i] = (str(firstDerivVars[i]) + "x^" + str((number - 2) - i))
+            elif i == (number - 2):
+                dispfirstDerivVars[i] = (str(firstDerivVars[i]))
+            if firstDerivVars[i] != 0:
+                secondDerivVars[i] = ((number - 2) - i)*int(firstDerivVars[i])
+                if firstDerivVars[i] != 0 and i != (number - 3):
+                    if ((number - 3) - i) == 1 and secondDerivVars[i] == "1": 
+                        dispsecondDerivVars[i] = "x"
+                    elif ((number - 3) - i) == 1:
+                        dispsecondDerivVars[i] = (str(secondDerivVars[i]) + "x")
+                    elif secondDerivVars[i] == "1":
+                        dispsecondDerivVars[i] = ("x^" + str((number - 3) - i))
+                    else:
+                        dispsecondDerivVars[i] = (str(secondDerivVars[i]) + "x^" + str((number - 3) - i))
+                elif i == (number - 3):
+                    dispsecondDerivVars[i] = (str(secondDerivVars[i]))
+    print (" ")
+    printDerivPoly("Function: ", funcVars, dispFuncVars)
+    printDerivPoly("First Derivative: ", firstDerivVars, dispfirstDerivVars)
+    printDerivPoly("Second Derivative: ", secondDerivVars, dispsecondDerivVars)
+    print (" ")
+    for i in range (0, number):
+        funcVars[i] = float(funcVars[i])
+        firstDerivVars[i] = float(firstDerivVars[i])
+        secondDerivVars[i] = float(secondDerivVars[i])
+    firstDerivFirstLoc, firstDerivLastLoc = makeArrayOne(firstDerivVars, number)
+    firstDerivFirstTerm = firstDerivVars[firstDerivFirstLoc]
+    firstDerivLastTerm = firstDerivVars[firstDerivLastLoc]
+    x = 0
+    y = 0
+    z = 0
+    lastTermFactors = [0] * 10
+    firstTermFactors = [0] * 10
+    zerosList = [0] * 10
+    for i in range(1,51):
+        if firstDerivLastTerm >= float(i):
+            if float(firstDerivLastTerm)%float(i) == 0:
+                lastTermFactors[x] = i
+                x = x + 1
+        if firstDerivFirstTerm >= i:
+            if float(firstDerivFirstTerm)%float(i) == 0:
+                firstTermFactors[y] = i
+                y = y + 1
+
+import math
+import sys
+number = 7
+isRunning = True
+print ("Polynomial Analysis")
+print ("")
+print ("This function will print the first and second derivatives of a polynomial function up to degree 6.")
+bool = polynomial(number)
