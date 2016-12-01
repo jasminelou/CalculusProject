@@ -1,4 +1,3 @@
-#x**3 + x*math.sin(x) not finding a minimum
 def equality(first, last, nameFirst, nameLast): #Provides the interval notation format for the printing of intervals in concavity tests and increasing/decreasing.
     print (nameFirst + "(-∞, " + str(first[0]) + "]", end = '') #What happens at the endpoints, with first interval
     for i in range (1, (len(first))): #If more than one point in first interval
